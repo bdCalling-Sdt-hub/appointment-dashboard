@@ -3,11 +3,17 @@ import { Link } from "react-router-dom";
 import { BsInfoCircle } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
+import { useGetAllUserListQuery } from "../../../redux/Features/get/getAllUsersListApi";
+import Loading from "../../../Components/Loading";
 
 const AllUser = () => {
     const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState();
+  const {data,isLoading} = useGetAllUserListQuery(currentPage);
+  if(isLoading){
+    return <Loading/>
+  }
 
   const dataSource = [
     {
@@ -112,6 +118,14 @@ const AllUser = () => {
       },
   ];
 
+  console.log(data);
+
+  console.log(data?.data?.attributes);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleView = (record) => {
     setUser(record);
     setIsModalOpen(true);
@@ -191,15 +205,15 @@ const AllUser = () => {
           pagination={{
             position: ["bottomCenter"],
             current: currentPage,
-              // pageSize:10,
-              // total:usersAll?.pagination?.Users,
-              // showSizeChanger: false,
-            //   onChange: handleChangePage,
+              pageSize:10,
+              total:data?.pagination?.Users,
+              showSizeChanger: false,
+              onChange: handleChangePage,
           }}
         // pagination={false}
           columns={columns}
           // dataSource={usersAll?.data?.attributes}
-          dataSource={dataSource}
+          dataSource={data?.data?.attributes}
 
         />
         </ConfigProvider>

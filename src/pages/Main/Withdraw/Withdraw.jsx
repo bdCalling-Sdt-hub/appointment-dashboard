@@ -13,7 +13,7 @@ const Withdraw = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState();
-  const { data, isLoading } = useGetWithDrawalQuery();
+  const { data, isLoading } = useGetWithDrawalQuery(currentPage);
   console.log(data);
 
   const result = data?.data?.attributes;

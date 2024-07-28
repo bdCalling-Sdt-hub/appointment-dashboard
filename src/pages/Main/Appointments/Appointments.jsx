@@ -2,12 +2,28 @@ import { ConfigProvider, DatePicker, Modal, Space, Table } from "antd";
 import { Link } from "react-router-dom";
 import { BsInfoCircle } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
-import { useState } from "react";
-
+import { useRef, useState } from "react";
+import { useGetAppointmentListQuery } from "../../../redux/Features/get/getAppointmentListApi";
+import Loading from "../../../Components/Loading";
+import { useReactToPrint } from "react-to-print";
+import Search from "antd/es/input/Search";
 const Appointments = () => {
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "Transaction",
+    // onAfterPrint: () => alert("Print success"),
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState();
+  const {data,isLoading,isSuccess} = useGetAppointmentListQuery();
+
+  if(isLoading){
+    return <Loading />
+  }
+
+  console.log(data);
 
   const dataSource = [
     {
@@ -191,6 +207,14 @@ const Appointments = () => {
       clinicAddress: "2715 Ash Dr. San Jose, South Dakota 83475",
     },
   ];
+const handleChangePage = (page) => {
+  console.log(page);
+  setCurrentPage(page);
+}
+
+  const result = data?.data?.attributes;
+  console.log(result);
+
 
   const handleView = (record) => {
     setUser(record);
@@ -208,21 +232,33 @@ const Appointments = () => {
       title: "Patient Name",
       dataIndex: "patientName",
       key: "patientName",
+      render:(text,record)=>{
+        return <p>{record?.doctorId?.firstName} {record?.doctorId?.lastName}</p>
+      }
     },
     {
       title: "Package",
       dataIndex: "package",
       key: "package",
+      render:(text,record)=>{
+        return <p>{record?.package?.packageName}</p>
+      }
     },
     {
-      title: "Time & Date",
+      title: "Date & Time",
       dataIndex: "date",
       key: "date",
+      render:(text,record)=>{
+        return <p>{record?.date} {record?.timeSlot}</p>
+      }
     },
     {
       title: "Doctor Name",
       dataIndex: "doctorName",
       key: "doctorName",
+      render:(text,record)=>{
+        return <p>{record?.doctorId?.firstName} {record?.doctorId?.lastName}</p>
+      }
     },
 
     {
@@ -241,19 +277,38 @@ const Appointments = () => {
       ),
     },
   ];
+  const onChange = (date, dateString) => {
+    console.log(dateString);
+  }
+
+  const onSearch = (value) => {
+    console.log(value);
+  };
   return (
     <div>
       <div className="flex justify-between items-center">
-        {/* <DatePicker
-            className="custom-date-picker"
-            onChange={onChange}
-            picker="month"
-            suffixIcon
-          /> */}
+    
       </div>
       <div className="bg-secondary w-full  border-2 rounded-t-lg mt-[24px]">
         <div className="flex py-[22px] mx-[20px] justify-between items-center">
           <p className=" test-[24px] font-bold">Appointments List</p>
+          <p className="flex">
+            <DatePicker
+              className="custom-date-picker"
+              onChange={onChange}
+              picker="date"
+              suffixIcon
+            />
+              <Search
+              placeholder="Search Doctor Name"
+              allowClear
+              enterButton="Search"
+              size="middle"
+              onSearch={onSearch}
+              className="ml-[10px]"
+              accessKey="key"
+            />
+          </p>
         </div>
         <ConfigProvider
           theme={{
@@ -271,15 +326,15 @@ const Appointments = () => {
             pagination={{
               position: ["bottomCenter"],
               current: currentPage,
-              // pageSize:10,
-              // total:usersAll?.pagination?.Users,
-              // showSizeChanger: false,
-              //   onChange: handleChangePage,
+              pageSize:10,
+              total:data?.pagination?.totalUsers,
+              showSizeChanger: false,
+                onChange: handleChangePage,
             }}
             // pagination={false}
             columns={columns}
             // dataSource={usersAll?.data?.attributes}
-            dataSource={dataSource}
+            dataSource={result}
           />
         </ConfigProvider>
       </div>
@@ -290,54 +345,48 @@ const Appointments = () => {
         footer={[]}
         closeIcon
       >
-        <div className="text-black bg-secondary w-full  border-2 rounded-t-lg">
+        <div className="text-black bg-secondary w-full  border-2 rounded-lg">
           <div className="flex justify-center items-center gap-2 flex-col border-b border-b-gray-300">
             <p className=" text-[26px] font-bold mb-[16px] my-10">
               Appointment Details
             </p>
           </div>
-          <div className="p-[20px] ">
+          <div ref={componentRef} className="p-[20px] ">
             <div className="flex justify-between border-b py-[16px]">
               <p>Patient Name: </p>
-              <p>{user?.patientName ? user?.patientName : "N/A"}</p>
+              <p>{user?.patientId ? user?.patientId?.firstName + " " + user?.patientId?.lastName : "N/A"}</p>
             </div>
             <div className="flex justify-between border-b py-[16px]">
               <p>Package:</p>
-              <p>{user?.package ? user?.package : "N/A"}</p>
+              <p>{user?.package?.packageName ? user?.package?.packageName : "N/A"}</p>
             </div>
             <div className="flex justify-between border-b py-[16px] ">
               <p>Date & Time:</p>
-              <p>{user?.date ? user?.date : "N/A"}</p>
+              <p>{user?.date} {user?.timeSlot}</p>
             </div>
             <div className="flex justify-between border-b py-[16px] ">
-              <p>Doctor name :</p>
-              <p>{user?.doctorName ? user?.doctorName : "N/A"}</p>
+              <p>Doctor name:</p>
+              <p>{user?.doctorId ?user?.doctorId?.firstName + " " + user?.doctorId?.lastName : "N/A"}</p>
             </div>
             <div className="flex justify-between border-b py-[16px] ">
-              <p>Appointment fee :</p>
-              <p>{user?.fee ? user?.fee : "N/A"}</p>
+              <p>Appointment Price :</p>
+              <p>{user?.package?.packagePrice}</p>
             </div>
-            <div className="flex justify-between border-b py-[16px] ">
-              <p>Payment Status :</p>
-              <p className="text-primary p-2 border-2 rounded-md border-primary">
-                {user?.paymentStatus ? user?.paymentStatus : "N/A"}
-              </p>
-            </div>
+            
             <div className="flex justify-between border-b py-[16px] ">
               <p>Appointment Status :</p>
-              <p className="text-primary p-2 border-2 rounded-md border-primary">
-                {user?.AppointmentStatus ? user?.AppointmentStatus : "N/A"}
+              <p className="text-primary p-2 border-2 rounded-md border-primary font-bold">
+                {user?.status ? user?.status.toUpperCase() : "N/A"}
               </p>
             </div>
-            <div className="flex justify-center gap-4 items-center pt-[16px]">
-              <p className="px-[35px] cursor-pointer py-[10px] bg-white border-2 border-primary text-primary font-normal rounded-lg">
-                Download
-              </p>
-              <p className="px-[55px] cursor-pointer py-[10px] bg-primary text-white rounded-lg">
+           
+          </div>
+          <div className="flex justify-center gap-4 items-center pb-[16px]">
+              
+              <p onClick={handlePrint} className="px-[55px] cursor-pointer py-[10px] bg-primary text-white rounded-lg">
                 {/* Regular P550 */}
                 Print
               </p>
-            </div>
           </div>
         </div>
       </Modal>

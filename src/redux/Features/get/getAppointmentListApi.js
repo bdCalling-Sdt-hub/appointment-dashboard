@@ -1,13 +1,13 @@
 import { baseApi } from "../../api/baseApi";
 
 
-const getCategoryApi = baseApi.injectEndpoints({
+const getAppointmentListApi = baseApi.injectEndpoints({
     endpoints:(builder)=>({
-        getCategory:builder.query({
-            query:()=>`/category/get-category`,
-            providesTags:["category"],
+        getAppointmentList:builder.query({
+            query:()=>`/admin/get-all-appointments`,
+            providesTags:["appointment"],
         })
     })
 })
 
-export const {useGetCategoryQuery} = getCategoryApi;
+export const {useGetAppointmentListQuery} = getAppointmentListApi;
