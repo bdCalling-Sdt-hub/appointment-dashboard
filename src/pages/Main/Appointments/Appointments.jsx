@@ -233,7 +233,7 @@ const handleChangePage = (page) => {
       dataIndex: "patientName",
       key: "patientName",
       render:(text,record)=>{
-        return <p>{record?.doctorId?.firstName} {record?.doctorId?.lastName}</p>
+        return <p>{record?.patientId?.firstName} {record?.patientId?.lastName}</p>
       }
     },
     {
