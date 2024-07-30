@@ -17,22 +17,34 @@ const Login = () => {
     console.log(isLoading, isError, status, error, data);
     try {
       const response = await setData(value);
+      console.log(response?.data?.data?.attributes?.role);
       console.log(response?.error?.data?.message);
       if (response?.data?.statusCode == 200) {
+
+        if(response?.data?.data?.attributes?.role == "admin"){
+          localStorage.setItem("token", response?.data?.data?.token);
+          localStorage.setItem(
+            "user-update",
+            JSON.stringify(response?.data?.data?.attributes)
+          );
+          Swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: response?.data?.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          navigate("/");
+          
+        }else{
+          Swal.fire({
+            icon: "error",
+            title:"You are not an admin",
+            // text: "You are not an admin",
+          });
+        }
+        
         console.log(data);
-        localStorage.setItem("token", response?.data?.data?.token);
-        localStorage.setItem(
-          "user-update",
-          JSON.stringify(response?.data?.data?.attributes)
-        );
-        Swal.fire({
-          position: "top-center",
-          icon: "success",
-          title: response?.data?.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        navigate("/");
       } else {
         Swal.fire({
           icon: "error",

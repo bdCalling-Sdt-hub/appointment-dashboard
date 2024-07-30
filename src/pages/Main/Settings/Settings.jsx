@@ -34,10 +34,10 @@ const Settings = () => {
   }, []);
 
   const settingsItem = [
-    // {
-    //   title: "Notification",
-    //   path: "notification",
-    // },
+    {
+      title: "Set Percentage for transactions",
+      path: "set-percentage-for-transactions",
+    },
     {
       title: "Change password",
       path: "change-password",
@@ -58,8 +58,9 @@ const Settings = () => {
   ];
 
   const handleNavigate = (value) => {
-    if (value === "notification") {
-      return;
+    if (value === "set-percentage-for-transactions") {
+      setModelTitle("Set Percentage for transactions");
+      setIsModalOpen(true);
     }
     // else if (value === "hidden-fee") {
     //   return;
@@ -200,6 +201,11 @@ const Settings = () => {
     setModelTitle("Verify OTP");
   };
 
+  const handleSetPercentage = async (values) => {
+    console.log(values);
+    // setIsModalOpen(false);
+  };
+
   return (
     <div className="ml-[24px] mt-[60px]">
       {settingsItem.map((setting, index) => (
@@ -289,7 +295,7 @@ const Settings = () => {
                   name="oldPassword"
                   prefix={
                     <IconLock
-                       className="mr-2 border-2 border-primary rounded-full p-[6px]"
+                      className="mr-2 border-2 border-primary rounded-full p-[6px]"
                       size={28}
                       color="#193664"
                     />
@@ -324,7 +330,7 @@ const Settings = () => {
                       color="#193664"
                     />
                   }
-                 className="p-4 bg-secondary
+                  className="p-4 bg-secondary
                     rounded w-full 
                     border-2 border-primary
                     justify-start 
@@ -362,7 +368,7 @@ const Settings = () => {
                   name="re_enter_password"
                   prefix={
                     <IconLock
-                        className="mr-2 border-2 border-primary rounded-full p-[6px]"
+                      className="mr-2 border-2 border-primary rounded-full p-[6px]"
                       size={28}
                       color="#193664"
                     />
@@ -510,6 +516,64 @@ const Settings = () => {
           </div>
         )}
 
+        {modelTitle === "Set Percentage for transactions" && (
+          <div className="px-[60px] pb-[60px] bg-secondary">
+            <p className="text-[14px] mb-[14px]">
+              Set the percentage for per appointment transaction
+            </p>
+            <Form
+              form={form}
+              name="dependencies"
+              autoComplete="off"
+              style={{
+                maxWidth: 600,
+              }}
+              layout="vertical"
+              className="space-y-4 fit-content object-contain"
+              onFinish={handleSetPercentage}
+            >
+              <Form.Item
+                name="percentageAmount"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Input Your Percentage !",
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  placeholder="10"
+                  type="number"
+                  className="p-4 bg-secondary
+                   rounded w-full 
+                   border-2 border-primary
+                   justify-start 
+                   mt-[12px]
+                   focus:border- hover:bg-secondary hover:border-primary
+                  "
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  style={{
+                    backgroundColor: "#193664",
+
+                    color: "#fff",
+                    size: "18px",
+                    height: "56px",
+                  }}
+                  htmlType="submit"
+                  className="block w-full h-[56px] px-2 py-4 mt-2 text-white bg-[#FA1131] rounded-lg"
+                >
+                  Set Percentage
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        )}
+
         {modelTitle === "Reset Password" && (
           <div className="px-[60px] pb-[60px] bg-secondary">
             <Form
@@ -599,7 +663,7 @@ const Settings = () => {
               <Form.Item>
                 <Button
                   style={{
-                    backgroundColor:"#193664",
+                    backgroundColor: "#193664",
                     color: "#fff",
                     size: "18px",
                     height: "56px",

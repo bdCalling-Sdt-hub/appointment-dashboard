@@ -5,6 +5,9 @@ import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
 import { useGetAllUserListQuery } from "../../../redux/Features/get/getAllUsersListApi";
 import Loading from "../../../Components/Loading";
+import { baseUrl } from "../../../utils/constant";
+import moment from "moment";
+import Search from "antd/es/input/Search";
 
 const AllUser = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -142,6 +145,14 @@ const AllUser = () => {
       title: "User Name",
       dataIndex: "name",
       key: "name",
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+        <img  className="w-10 h-10 rounded-full" src={`${baseUrl}${record?.image?.publicFileURL}`} alt="" />
+          <div>
+            <p>{record?.firstName + " " + record?.lastName}</p>
+          </div>
+        </div>
+      ),
     },
     {
       title: 'Email',
@@ -150,13 +161,19 @@ const AllUser = () => {
     },
     {
       title: "Phone Number",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
+      dataIndex: "phone",
+      key: "phone",
+      render:(_,record)=>{
+        return <p>{record?.phone || "N/A"}</p>
+      }
     },
     {
       title: "Join Date",
       dataIndex: "date",
       key: "date",
+      render:(_,record)=>{
+        return <p>{moment(record?.createdAt).format("DD-MM-YYYY")}</p>
+      }
       
     },
     
@@ -173,19 +190,39 @@ const AllUser = () => {
       ),
     },
   ];
+
+  const onChange = (date, dateString) => {
+    console.log(dateString);
+  }
+
+  const onSearch = (value) => {
+    console.log(value);
+  };
     return (
         <div>
         <div className="flex justify-between items-center">
-          {/* <DatePicker
-            className="custom-date-picker"
-            onChange={onChange}
-            picker="month"
-            suffixIcon
-          /> */}
+          
         </div>
         <div className="bg-secondary w-full  border-2 rounded-t-lg mt-[24px]">
           <div className="flex py-[22px] mx-[20px] justify-between items-center">
             <p className=" test-[24px] font-bold">User List</p>
+            <p className="flex">
+            <DatePicker
+              className="custom-date-picker"
+              onChange={onChange}
+              picker="date"
+              suffixIcon
+            />
+              <Search
+              placeholder="Search Doctor Name"
+              allowClear
+              enterButton="Search"
+              size="middle"
+              onSearch={onSearch}
+              className="ml-[10px]"
+              accessKey="key"
+            />
+          </p>
           </div>
           <ConfigProvider
   theme={{
@@ -234,7 +271,7 @@ const AllUser = () => {
         <div className="flex justify-between border-b py-[16px]">
             <p>User Name: </p>
             <p>
-              {user?.name ? user?.name : "N/A"}
+              {user ? `${user?.firstName} ${user?.lastName}` : "N/A"}
             </p>
           </div>
           <div className="flex justify-between border-b py-[16px]">
@@ -246,7 +283,7 @@ const AllUser = () => {
           <div className="flex justify-between border-b py-[16px] ">
             <p>Phone Number:</p>
             <p>
-              {user?.phoneNumber ? user?.phoneNumber : "N/A"}
+              {user?.phone ? user?.phone : "N/A"}
             </p>
           </div>
           <div className="flex justify-between border-b py-[16px] ">
@@ -258,7 +295,7 @@ const AllUser = () => {
           <div className="flex justify-between border-b py-[16px]">
             <p>Joining Date :</p>
             <p>
-              {user?.date ? user?.date : "N/A"}
+              {user ? moment(user?.createdAt).format("DD-MM-YYYY") : "N/A"}
             </p>
           </div>
           {/* <div className="flex justify-between border-b py-[16px]">
