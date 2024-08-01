@@ -16,9 +16,13 @@ import { GoArrowLeft } from "react-icons/go";
 import { HiOutlineMailOpen } from "react-icons/hi";
 // import baseURL from "../../../config";
 import Swal from "sweetalert2";
+import { useGetPercentageQuery } from "../../../redux/Features/get/getPercentageApi";
+import { usePostCreatePercentageMutation } from "../../../redux/Features/post/postCrearePercentageApi";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const [setPercentage,res] = usePostCreatePercentageMutation();
+  const {data,isLoading} = useGetPercentageQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modelTitle, setModelTitle] = useState("");
   const [otp, setOtp] = useState("");
@@ -57,6 +61,7 @@ const Settings = () => {
     },
   ];
 
+console.log(data?.data?.attributes?.percentage);
   const handleNavigate = (value) => {
     if (value === "set-percentage-for-transactions") {
       setModelTitle("Set Percentage for transactions");
@@ -203,7 +208,23 @@ const Settings = () => {
 
   const handleSetPercentage = async (values) => {
     console.log(values);
+ 
     // setIsModalOpen(false);
+    try {
+      const response = await setPercentage(values);
+      console.log(response?.data?.statusCode);
+      if(response?.data?.statusCode == 200){
+        
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Try Again...",
+        text: error?.response?.data?.message,
+        footer: '<a href="#">Why do I have this issue?</a>',
+      });
+    }
   };
 
   return (
@@ -527,6 +548,9 @@ const Settings = () => {
               autoComplete="off"
               style={{
                 maxWidth: 600,
+              }}
+              initialValues={{
+                percentageAmount:data?.data?.attributes?.percentage
               }}
               layout="vertical"
               className="space-y-4 fit-content object-contain"

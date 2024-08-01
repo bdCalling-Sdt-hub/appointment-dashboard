@@ -2,21 +2,26 @@ import { ConfigProvider, DatePicker, Modal, Space, Table } from "antd";
 import { Link } from "react-router-dom";
 import { BsInfoCircle } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGetAllUserListQuery } from "../../../redux/Features/get/getAllUsersListApi";
 import Loading from "../../../Components/Loading";
 import { baseUrl } from "../../../utils/constant";
 import moment from "moment";
 import Search from "antd/es/input/Search";
+import { useReactToPrint } from "react-to-print";
 
 const AllUser = () => {
     const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const componentRef = useRef();
   const [user, setUser] = useState();
   const {data,isLoading} = useGetAllUserListQuery(currentPage);
   if(isLoading){
     return <Loading/>
   }
+
+
+
 
   const dataSource = [
     {

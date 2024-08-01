@@ -17,7 +17,7 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["category","withdraw"],
+  tagTypes: ["category","withdraw","percentage"],
   endpoints: () => ({}),
 });
 
