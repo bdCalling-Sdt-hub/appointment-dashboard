@@ -8,9 +8,10 @@ import { baseUrl } from "../utils/constant";
 import { useReactToPrint } from "react-to-print";
 
 const FullRecentTransaction = () => {
-  const { data, isLoading } = useGetAppointmentListQuery();
-  console.log(data);
   const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading } = useGetAppointmentListQuery(currentPage);
+  console.log(data);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState();
   const componentRef = useRef();
@@ -117,7 +118,7 @@ const FullRecentTransaction = () => {
   const handleChangePage = (page) => {
     setCurrentPage(page);
   }
-
+console.log(data?.data?.pagination?.totalUsers);
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -149,7 +150,7 @@ const FullRecentTransaction = () => {
               position: ["bottomCenter"],
               current: currentPage,
               pageSize:10,
-              total:data?.data?.pagination?.totalUsers,
+              total:data?.pagination?.totalUsers,
               showSizeChanger: false,
                 onChange: handleChangePage,
             }}

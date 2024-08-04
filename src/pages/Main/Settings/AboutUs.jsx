@@ -1,18 +1,20 @@
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
+import { useGetAboutQuery } from "../../../redux/Features/get/getAboutApi";
+import Loading from "../../../Components/Loading";
 // import { useGetAboutUsQuery } from "../../../redux/Features/getAboutUsApi";
 // import Loading from "../../../Components/Loading";
 
 
 const AboutUs = () => {
     const navigate = useNavigate();
-    // const {data,isSuccess,isLoading} = useGetAboutUsQuery();
-    // if(isLoading){  
-    //     return <Loading/>;
-    // }
+    const {data,isSuccess,isLoading} = useGetAboutQuery();
+    if(isLoading){  
+        return <Loading/>;
+    }
     // console.log(data);
-    // const content = data?.data?.attributes?.content;
-    const content = "This is About Us content";
+    const content = data?.data?.attributes?.content;
+
     return (
         <div className="relative ml-[24px] ">
         <div className=" mt-[44px] cursor-pointer flex items-center pb-3 gap-2">

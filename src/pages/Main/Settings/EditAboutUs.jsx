@@ -6,56 +6,58 @@ import { useEffect, useRef, useState } from "react";
 // import { useGetAboutUsQuery } from "../../../redux/Features/getAboutUsApi";
 // import baseURL from "../../../config";
 import Swal from "sweetalert2";
+import { usePostAboutUsMutation } from "../../../redux/Features/post/postAboutUsApi";
+import { useGetAboutQuery } from "../../../redux/Features/get/getAboutApi";
+import Loading from "../../../Components/Loading";
 
 const EditAboutUs = () => {
     const navigate = useNavigate();
     const editor = useRef(null);
-    // const {data,isSuccess,isLoading} = useGetAboutUsQuery();
+    const [setAboutUs,res] = usePostAboutUsMutation()
+    const {data,isSuccess,isLoading} = useGetAboutQuery();
+    console.log(data?.data?.attributes?.content);
     // const [content, setContent] = useState(data?.data?.attributes?.content);
     const [content, setContent] = useState("");
-    // useEffect(()=>{
-    // setContent(data?.data?.attributes?.content);  
-    // },[data])
-    // console.log("data",data);
+    useEffect(()=>{
+    setContent(data?.data?.attributes?.content);  
+    },[data])
+    if(isLoading){
+        return <Loading/>
+    }
+    console.log("data",data);
   console.log(content);
   
-    const handleUpdate = async ()=>{
-      console.log(content);
-    //   try {
-    //     const response = await baseURL.put(`/setting/about-us`, {
-    //       content: content
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         authentication: `Bearer ${localStorage.getItem("token")}`,
-    //       }
-    //     }
-    //     )
-    //     if(response?.data?.statusCode === 201){
-    //       Swal.fire({
-    //         position: "top-center",
-    //         icon: "success",
-    //         title: response?.data?.message,
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //       });
-    //       setInterval(()=>window.location.reload(),1600)
-    //       navigate("/settings/about-us")
-    //     }
-       
-       
-    //     console.log(response);
-    //   }catch(error){
-    //     console.log(error);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Try Again...",
-    //       text: error?.response?.data?.message,
-    //       footer: '<a href="#">Why do I have this issue?</a>',
-    //     })
-    //   }
-    } 
+  const handleUpdate = async () => {
+    console.log(content);
+    try {
+      const response = await setAboutUs({content:content});
+      console.log(response);
+      if (response?.data?.statusCode == 201) {
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: response?.data?.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        navigate("/settings/about-us");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response?.data?.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        position: "top-center",
+        icon: "success",
+        title: error?.data?.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
     return (
         <div className="relative ml-[24px]">
         <div className=" mt-[44px] cursor-pointer flex items-center pb-3 gap-2">

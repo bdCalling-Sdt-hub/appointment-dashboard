@@ -1,16 +1,18 @@
 import React from 'react';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGetPrivacyPolicyQuery } from '../../../redux/Features/get/getPrivacyPolicyApi';
+import Loading from '../../../Components/Loading';
 
 const PrivacyPolicy = () => {
     const navigate = useNavigate();
-    // const {data,isSuccess,isLoading} = useGetAboutUsQuery();
-    // if(isLoading){  
-    //     return <Loading/>;
-    // }
+    const {data,isLoading,isSuccess} = useGetPrivacyPolicyQuery();
+    if(isLoading){  
+        return <Loading/>;
+    }
     // console.log(data);
-    // const content = data?.data?.attributes?.content;
-    const content = "Privacy Policy content";
+    const content = data?.data?.attributes?.content;
+
     return (
         <div className="relative ml-[24px] ">
         <div className=" mt-[44px] cursor-pointer flex items-center pb-3 gap-2">

@@ -17,6 +17,7 @@ const Login = () => {
     console.log(isLoading, isError, status, error, data);
     try {
       const response = await setData(value);
+      console.log(response);
       console.log(response?.data?.data?.attributes?.role);
       console.log(response?.error?.data?.message);
       if (response?.data?.statusCode == 200) {

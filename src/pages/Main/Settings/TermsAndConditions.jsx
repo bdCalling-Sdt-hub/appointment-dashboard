@@ -1,16 +1,17 @@
 import React from 'react';
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGetTermsAndConditionsQuery } from '../../../redux/Features/get/getTermsAndConditionsApi';
 
 const TermsAndConditions = () => {
     const navigate = useNavigate();
-    // const {data,isSuccess,isLoading} = useGetAboutUsQuery();
+    const {data,isLoading,isSuccess} = useGetTermsAndConditionsQuery()
+    console.log(data);
     // if(isLoading){  
     //     return <Loading/>;
     // }
     // console.log(data);
-    // const content = data?.data?.attributes?.content;
-    const content = "This is Terms & Conditions content";
+    const content = data?.data?.attributes?.content;
     return (
         <div className="relative ml-[24px] ">
         <div className=" mt-[44px] cursor-pointer flex items-center pb-3 gap-2">

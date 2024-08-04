@@ -380,7 +380,7 @@ const Withdraw = () => {
             </div>
 
             {
-              user?.status !== "Completed" && (
+              user?.status == "Pending" && (
                 <div className="flex justify-center gap-4 items-center pt-[16px]">
               <p
                 onClick={() => handleCancel(user?._id)}

@@ -173,6 +173,24 @@ const AllUser = () => {
       }
     },
     {
+      title: "Role",
+      dataIndex: "phone",
+      key: "phone",
+      render:(_,record)=>{
+        
+          if(record?.role === "doctor"){
+            return <p className="capitalize font-bold text-blue-500  "> <span className="p-2 border-2 rounded-full border-blue-500">Doctor</span></p>
+            
+          }else if(record?.role === "user"){
+           return <p className="capitalize font-bold text-green-500  "> <span className="p-2 border-2 rounded-full border-green-500">Patient</span></p>
+          }else if(record?.role === "admin"){
+            return <p className="capitalize font-bold text-red-500  "> <span className="p-2 border-2 rounded-full border-red-500">Admin</span></p>
+          }
+          
+        
+      }
+    },
+    {
       title: "Join Date",
       dataIndex: "date",
       key: "date",
@@ -248,7 +266,7 @@ const AllUser = () => {
             position: ["bottomCenter"],
             current: currentPage,
               pageSize:10,
-              total:data?.pagination?.Users,
+              total:data?.pagination?.totalUsers,
               showSizeChanger: false,
               onChange: handleChangePage,
           }}
@@ -303,12 +321,21 @@ const AllUser = () => {
               {user ? moment(user?.createdAt).format("DD-MM-YYYY") : "N/A"}
             </p>
           </div>
-          {/* <div className="flex justify-between border-b py-[16px]">
-            <p>Score:</p>
-            <p>
-              {user?.score ? user?.score : "N/A"}
-            </p>
-          </div> */}
+          <div className="flex justify-between border-b py-[16px]">
+  <p>Insurance:</p>
+  {user?.isInsurance ? (
+    <a
+      href={`${baseUrl}${user?.insurance?.publicFileURL}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-500 font-bold cursor-pointer"
+    >
+      Click Here
+    </a>
+  ) : (
+    "N/A"
+  )}
+</div>
           {/* <div className="flex justify-between border-b py-[16px]">
             <p>Driving license:</p>
             <p className="text-secondary font-bold cursor-pointer">

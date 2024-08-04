@@ -4,9 +4,13 @@ import { BsInfoCircle } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
+import { useGetAppointmentListQuery } from "../redux/Features/get/getAppointmentListApi";
+import { baseUrl } from "../utils/constant";
 
 const RecentTransaction = () => {
   const componentRef = useRef();
+  const {data,isLoading,isSuccess} = useGetAppointmentListQuery();
+  console.log(data?.data?.attributes);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: "Transaction",
@@ -71,44 +75,52 @@ const RecentTransaction = () => {
 
   const columns = [
     {
+      title: "#SI",
+      dataIndex: "count",
+      key: "transactionId",
+      render: (text, _, index) => (currentPage - 1) * 10 + index + 1,
+    },
+    {
       title: "#Tr.ID",
       dataIndex: "transactionId",
       key: "transactionId",
       // render: (text,_,index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: "User Name",
+      title: "Patient Name",
       dataIndex: "name",
       key: "name",
-      // render: (_, record) => (
-      //   <div className="flex gap-2 items-center">
-      //     <img
-      //       className="w-[34px] h-[34px] rounded-full"
-      //       src={`${import.meta.env.VITE_BASE_URL}${record?.image?.publicFileURL}`}
-      //       alt=""
-      //     />
-      //     <p className="font-medium">{record.name}</p>
-      //   </div>
-      // ),
+      render: (_, record) => (
+        <div className="flex gap-2 items-center">
+          <img
+            className="w-[34px] h-[34px] rounded-full"
+            src={`${baseUrl}${record?.patientId?.image?.publicFileURL}`}
+            alt=""
+          />
+          <p className="font-medium">{`${record.patientId.firstName} ${record.patientId.lastName}`}</p>
+        </div>
+      ),
     },
     {
       title: "Doctor Name",
       dataIndex: "providerName",
       key: "providerName",
+      render: (_, record) => (
+        <div className="flex gap-2 items-center">
+          <img
+            className="w-[34px] h-[34px] rounded-full"
+            src={`${baseUrl}${record?.doctorId?.image?.publicFileURL}`}
+            alt=""
+          />
+          <p className="font-medium">{`${record.doctorId.firstName} ${record.doctorId.lastName}`}</p>
+        </div>
+      ),
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
     },
-    // {
-    //   title: "Date",
-    //   dataIndex: "date",
-    //   key: "date",
-    //   // render: (_, record) => (
-    //   //   <p>{record?.club ? record?.club : "N/A"}</p>
-    //   // )
-    // },
     {
       title: "Date",
       key: "date",
@@ -143,6 +155,8 @@ const RecentTransaction = () => {
       ),
     },
   ];
+
+  
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -181,10 +195,11 @@ const RecentTransaction = () => {
             pagination={false}
             columns={columns}
             // dataSource={usersAll?.data?.attributes}
-            dataSource={dataSource}
+            dataSource={data?.data?.attributes.slice(0, 5)}
           />
         </ConfigProvider>
       </div>
+
       <Modal
         open={isModalOpen}
         onOk={() => setIsModalOpen(false)}
@@ -192,32 +207,49 @@ const RecentTransaction = () => {
         footer={[]}
         closeIcon
       >
-        <div
-          
-          className="text-black bg-secondary w-full  border-2 rounded-lg"
-        >
-
-          <div ref={componentRef} >
+        <div   className="text-black bg-secondary w-full  border-2 rounded-t-lg">
           <div className="flex justify-center items-center gap-2 flex-col border-b border-b-gray-300">
-            <p className=" text-[26px] font-medium text-textColor mb-[16px] my-10">
+            <p className=" text-[26px] font-bold mb-[16px] my-10">
               Transaction Details
             </p>
           </div>
-          <div className="p-[20px] ">
+          <div >
+            <div className="p-[20px]" ref={componentRef}>
             <div className="flex justify-between border-b py-[16px]">
               <p>Transaction ID: </p>
               <p>{user?.transactionId ? user?.transactionId : "N/A"}</p>
             </div>
             <div className="flex justify-between border-b py-[16px]">
+              <p>Patient Name:</p>
+              <p>
+                {user?.patientId
+                  ? user?.patientId?.firstName + " " + user?.patientId?.lastName
+                  : "N/A"}
+              </p>
+            </div>
+            <div className="flex justify-between border-b py-[16px]">
+              <p>Patient Email:</p>
+              <p>{user?.patientId ? user?.patientId?.email : "N/A"}</p>
+            </div>
+            <div className="flex justify-between border-b py-[16px]">
+              <p>Doctor Name:</p>
+              <p>
+                {user?.doctorId
+                  ? user?.doctorId?.firstName + " " + user?.doctorId?.lastName
+                  : "N/A"}
+              </p>
+            </div>
+            <div className="flex justify-between border-b py-[16px]">
+              <p>Doctor Email:</p>
+              <p>{user?.doctorId ? user?.doctorId?.email : "N/A"}</p>
+            </div>
+            <div className="flex justify-between border-b py-[16px]">
               <p>Date:</p>
               <p>{user?.date ? user?.date : "N/A"}</p>
             </div>
-            <div className="flex justify-between border-b py-[16px] ">
-              <p>User Name:</p>
-              <p>{user?.name ? user?.name : "N/A"}</p>
-            </div>
+
             <div className="flex justify-between border-b py-[16px]">
-              <p>Amount :</p>
+              <p> {user?.package ? user?.package?.packageName : "N/A"}:</p>
               <p>{user?.amount ? user?.amount : "N/A"}</p>
             </div>
             {/* <div className="flex justify-between border-b py-[16px]">
@@ -226,23 +258,21 @@ const RecentTransaction = () => {
               {user?.score ? user?.score : "N/A"}
             </p>
           </div> */}
-            <div className="flex justify-between border-b py-[16px]">
-              <p>Provider Name:</p>
-              <p>{user?.providerName ? user?.providerName : "N/A"}</p>
-            </div>
-          </div>
-          </div>
+</div>
             <div className="flex justify-center gap-4 items-center py-[16px]">
-              <p
-                onClick={handlePrint}
-                className="px-[55px] cursor-pointer py-[10px] bg-primary text-white rounded-lg"
-              >
+              {/* <p className="px-[35px] cursor-pointer py-[10px] bg-white border-2 border-primary text-primary font-normal rounded-lg">
+                Download
+              </p> */}
+              <p onClick={handlePrint} className="px-[55px] cursor-pointer py-[10px] bg-primary text-white rounded-lg">
+                {/* Regular P550 */}
                 Print
               </p>
             </div>
-          
+          </div>
         </div>
       </Modal>
+
+
     </div>
   );
 };
