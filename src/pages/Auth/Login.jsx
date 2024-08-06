@@ -21,7 +21,6 @@ const Login = () => {
       console.log(response?.data?.data?.attributes?.role);
       console.log(response?.error?.data?.message);
       if (response?.data?.statusCode == 200) {
-
         if(response?.data?.data?.attributes?.role == "admin"){
           localStorage.setItem("token", response?.data?.data?.token);
           localStorage.setItem(

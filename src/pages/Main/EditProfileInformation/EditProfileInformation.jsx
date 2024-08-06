@@ -10,9 +10,14 @@ import "react-phone-number-input/style.css";
 // import Loading from "../../../Components/Loading";
 // import baseURL from "../../../config";
 import Swal from "sweetalert2";
+import { useGetLoginUserQuery } from "../../../redux/Features/get/getLoginUserApi";
+import Loading from "../../../Components/Loading";
+import { baseUrl } from "../../../utils/constant";
 
 const EditProfileInformation = () => {
     const navigate = useNavigate();
+    const { data, isError, isLoading } = useGetLoginUserQuery();
+
     const { id } = useParams();
     // const {data,isError,isLoading} = useGetSingleUserQuery(id);
     // const user = data?.data?.attributes;
@@ -25,16 +30,19 @@ const EditProfileInformation = () => {
           "https://i.ibb.co/VBcnsLy/download.jpg",
       },
     };
+    const result = data?.data?.attributes;
+    console.log(result);
+    
   
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber);
   const [email, setEmail] = useState(user?.email);
   const [fileList, setFileList] = useState([]);
-    const [imageUrl, setImageUrl] = useState(`${baseUrl}${user?.image?.publicFileURL}`);
+    const [imageUrl, setImageUrl] = useState();
     useEffect(() => {
       setImageUrl(`${baseUrl}${user?.image?.publicFileURL}`);
-      setEmail(user?.email);
-      setPhoneNumber(user?.phone)
+      // setEmail(result?.email);
+      setPhoneNumber(result?.phone)
     }, [user]);
     // if (isLoading) {
     //   return <Loading />;
@@ -70,6 +78,10 @@ const EditProfileInformation = () => {
           });
         },
       };
+
+      if(isLoading){
+        return <Loading/>
+      }
       const handleUpdateProfile = async (values) => {
         console.log(values);
         // const updateProfile = {
@@ -137,7 +149,10 @@ const EditProfileInformation = () => {
             wrapperCol={{ span: 40 }}
             layout="vertical"
             initialValues={{
-              remember: true,
+              firstName: result?.firstName,
+              lastName: result?.lastName,
+              email: result?.email,
+              phoneNumber: result?.phoneNumber,
             }}
             autoComplete="off"
             onFinish={handleUpdateProfile}
@@ -168,8 +183,8 @@ const EditProfileInformation = () => {
                   >
                     <img
                       className="w-[242px] h-[242px] rounded-full flex justify-center items-center opacity-50"
-                    //   src={imageUrl}
-                    src="https://i.ibb.co/VBcnsLy/download.jpg"
+                      src={`${baseUrl}${result?.image?.publicFileURL}`}
+                    // src="https://i.ibb.co/VBcnsLy/download.jpg"
                       alt=""
                     />
   
@@ -181,28 +196,7 @@ const EditProfileInformation = () => {
                     </Button>
                   </Upload>
                   <div>
-                    {/* <Upload
-                {...props}
-                onChange={(info) => {
-                  if (info.file.status !== "uploading") {
-                    console.log(info.file, info.fileList);
-                  }
-                  if (info.file.status === "done") {
-                    message.success(
-                      `${info.file.name} file uploaded successfully`
-                    );
-                  } else if (info.file.status === "error") {
-                    message.error(`${info.file.name} file upload failed.`);
-                  }
-                }}
-              >
-                <Button
-                  className="border-none text-[16px] text-[#3BA6F6] bg-[white] absolute text-primary hover:text-primary"
-                  icon={<LuImagePlus size={17} className="text-[#3BA6F6]"/>}
-                >
-                  Change Picture
-                </Button>
-            </Upload> */}
+        
                   </div>
                 </div>
                 <div className="flex flex-col justify-center items-center">
@@ -216,16 +210,16 @@ const EditProfileInformation = () => {
               </div>
   
               <div className="flex-1 w-[66%]" >
-                <div className="flex flex-col gap-[24px]">
-                  <div className="flex gap-[25px]">
+                <div className="flex flex-col gap-[4px]">
+               
                     <div className="flex-1">
                       <Form.Item
                         label={
                           <span className=" text-[18px] font-medium">
-                            Name
+                            First Name
                           </span>
                         }
-                        name="name"
+                        name="firstName"
                         
                         className="flex-1"
                         rules={[
@@ -237,19 +231,49 @@ const EditProfileInformation = () => {
                         initialValue={user?.name}
                       >
                         <Input
-                          placeholder="Name"
+                          placeholder="First Name"
                           className="p-4 bg-secondary
                   rounded w-full 
                   justify-start 
                   border-2 
                   border-primary
-                  mt-[12px]
+                 
                   items-center
                   gap-4 inline-flex  focus:bg-secondary hover:bg-secondary hover:border-primary"
                         />
                       </Form.Item>
                     </div>
-                  </div>
+                
+                  <div className="flex-1">
+                      <Form.Item
+                        label={
+                          <span className=" text-[18px] font-medium">
+                            Last Name
+                          </span>
+                        }
+                        name="lastName"
+                        
+                        className="flex-1"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your First Name!",
+                          },
+                        ]}
+                        initialValue={user?.name}
+                      >
+                        <Input
+                          placeholder="Last Name"
+                          className="p-4 bg-secondary
+                  rounded w-full 
+                  justify-start 
+                  border-2 
+                  border-primary
+                  items-center
+                  gap-4 inline-flex  focus:bg-secondary hover:bg-secondary hover:border-primary"
+                        />
+                      </Form.Item>
+                    </div>
                   <div className="flex-1">
                     <Form.Item
                       label={
@@ -274,7 +298,6 @@ const EditProfileInformation = () => {
                         justify-start 
                         border-2 
                         border-primary
-                        mt-[12px]
                         items-center
                         gap-4 inline-flex  focus:bg-secondary hover:bg-secondary hover:border-primary"
                       />
@@ -301,43 +324,6 @@ const EditProfileInformation = () => {
                       onChange={setPhoneNumber}
                     />
                   </div>
-                  {/* <div className="flex-1">
-                    <Form.Item
-                      label={
-                        <span style={{fontFamily:"Aldrich"}} className="text-[white] text-[18px] font-medium">
-                          Date Of Birth
-                        </span>
-                      }
-                      name="dateOfBirth"
-                      className="flex-1"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Date Of Birth!",
-                        },
-                      ]}
-                      initialValue={user?.dateOfBirth
-                        ? moment(user.dateOfBirth, "DD-M-YYYY")
-                        : null}
-                    >
-                      <DatePicker
-                         className="p-4 bg-[#706768]
-                         rounded w-full 
-                         justify-start 
-                         border-none
-                         mt-[12px]
-                         items-center 
-                         gap-4 inline-flex outline-none focus:border-none focus:bg-[#706768] hover:bg-[#706768] text-white"
-                        type="date"
-                        prefix={" "}
-                        // defaultValue={
-                        //   user?.dateOfBirth
-                        //     ? moment(user.dateOfBirth, "DD-M-YYYY")
-                        //     : null
-                        // }
-                      />
-                    </Form.Item>
-                  </div> */}
                 </div>
               </div>
             </div>

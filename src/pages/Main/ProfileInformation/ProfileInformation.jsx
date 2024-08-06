@@ -5,24 +5,37 @@ import { CiCalendarDate } from "react-icons/ci";
 // import "react-phone-number-input/style.css";
 // import PhoneInput from "react-phone-number-input";
 import { useNavigate } from "react-router-dom";
+import { useGetLoginUserQuery } from "../../../redux/Features/get/getLoginUserApi";
+import Loading from "../../../Components/Loading";
+import {baseUrl} from "../../../utils/constant";
 
 const ProfileInformation = () => {
-    const [currentUser,setCurrentUser] = useState()
-  const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_API_URL;
-  useEffect(()=>{
-    const storedUser = localStorage.getItem('user-update');
-    const user = JSON.parse(storedUser);
-    console.log(user);
-    setCurrentUser(user);
-  },[])
+    const [currentUser,setCurrentUser] = useState();
+    const navigate = useNavigate();
+    const {data,isSuccess,isLoading,isError} = useGetLoginUserQuery();
+
+    if(isLoading){
+      return <Loading/>
+    }
+
+    console.log(data?.data?.attributes);
+    const result = data?.data?.attributes;
+    
+  // const navigate = useNavigate();
+  // const baseUrl = ;
+  // useEffect(()=>{
+  //   const storedUser = localStorage.getItem('user-update');
+  //   const user = JSON.parse(storedUser);
+  //   console.log(user);
+  //   setCurrentUser(user);
+  // },[])
   console.log("uuuuuser",currentUser);
     return (
         <div>
       <div className="flex justify-between items-center ml-[14px] mt-[20px] mb-[33px]">
         <h1 className="text-[30px] font-medium">Profile Information</h1>
         <div
-            onClick={(e) =>navigate(`/edit-profile/${currentUser?._id}`)}
+            onClick={(e) =>navigate(`/edit-profile/${result?._id}`)}
           className="flex gap-2 items-center py-[15px]
                  px-[40px]
                   bg-primary
@@ -39,14 +52,14 @@ const ProfileInformation = () => {
         <div className="w-[33%] bg-secondary rounded-xl ml-[24px] flex flex-col justify-center items-center gap-[30px] p-10">
           <img
             className="w-[242px] h-[242px] rounded-full"
-            // src={`${import.meta.env.VITE_BASE_URL}${currentUser?.image?.publicFileURL}`}
-            src="https://i.ibb.co/VBcnsLy/download.jpg"
+            src={`${baseUrl}${result?.image?.publicFileURL}`}
+            // src="https://i.ibb.co/VBcnsLy/download.jpg"
             alt=""
           />
           <div className="flex flex-col justify-center items-center">
-            <p className="text-[20px] ">{currentUser?.role?.toUpperCase() || "Admin"}</p>
+            <p className="text-[20px] ">{result?.role?.toUpperCase() || "Admin"}</p>
             <h1 className="text-[30px] font-medium">
-             {currentUser?.name?.toUpperCase() || "Ahad Hossain Aiman"}
+             {result?.firstName + " " + result?.lastName  || "Ahad Hossain Aiman"}
             </h1>
           </div>
         </div>
@@ -64,7 +77,7 @@ const ProfileInformation = () => {
                 <Input
               
                   placeholder="First name"
-                  value={currentUser?.name}
+                  value={result?.firstName + " " + result?.lastName}
                   className="p-4 bg-secondary
                   rounded w-full 
                   justify-start 
@@ -89,7 +102,7 @@ const ProfileInformation = () => {
               <Input
           
                 placeholder="Email"
-                value={currentUser?.email}
+                value={result?.email}
                 className="p-4 bg-secondary
                 rounded w-full 
                 justify-start 
@@ -111,7 +124,7 @@ const ProfileInformation = () => {
               </label>
               <Input
                 placeholder="Phone"
-                value={currentUser?.phone || "Not Provided"}
+                value={result?.phone || "Not Provided"}
                 className="p-4 bg-secondary
                 rounded w-full 
                 justify-start 
