@@ -13,10 +13,12 @@ import Swal from "sweetalert2";
 import { useGetLoginUserQuery } from "../../../redux/Features/get/getLoginUserApi";
 import Loading from "../../../Components/Loading";
 import { baseUrl } from "../../../utils/constant";
+import { usePostEditProfileMutation } from "../../../redux/Features/post/postEditProfileApi";
 
 const EditProfileInformation = () => {
     const navigate = useNavigate();
     const { data, isError, isLoading } = useGetLoginUserQuery();
+    const [setProfile,res] = usePostEditProfileMutation();
 
     const { id } = useParams();
     // const {data,isError,isLoading} = useGetSingleUserQuery(id);
@@ -84,11 +86,12 @@ const EditProfileInformation = () => {
       }
       const handleUpdateProfile = async (values) => {
         console.log(values);
-        // const updateProfile = {
-        //   ...values,
-        //   image: fileList[0]?.originFileObj,
-        //   phoneNumber,
-        // };
+        const updateProfile = {
+          ...values,
+          image: fileList[0]?.originFileObj,
+          phoneNumber,
+        };
+        console.log(updateProfile);
         // const formData = new FormData();
         // formData.append("name", updateProfile?.name);
         // formData.append("email", updateProfile?.email);
@@ -130,6 +133,7 @@ const EditProfileInformation = () => {
         //     footer: '<a href="#">Why do I have this issue?</a>',
         //   });
         // }
+
         console.log(updateProfile);
       };
 
