@@ -3,18 +3,23 @@ import { Pagination } from "antd";
 // import { useGetAdminNotificationQuery } from "../../../redux/Features/getAdminNotificationApi";
 import { useState } from "react";
 import NotificationCart from "../../../Components/NotificationCart";
+import { useGetNotificationQuery } from "../../../redux/Features/get/getNotificationApi";
+import Loading from "../../../Components/Loading";
 // import Loading from "../../../Components/Loading";
 
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
-//   const {data,isSuccess,isLoading} = useGetAdminNotificationQuery(currentPage);
-//   if(isLoading){
-//     return <Loading/>
-//   }
-//   console.log(data?.data);
+  const {data,isSuccess,isLoading} = useGetNotificationQuery(currentPage);
+  if(isLoading){
+    return <Loading/>
+  }
+  console.log(data);
+  const result = data?.data?.attributes;
+  console.log(data?.pagination?.totalUsers);
+  
   const onChange = (values) => {
-    console.log(values);
+    // console.log(values);
     setCurrentPage(values);
   };
     return (
@@ -27,23 +32,24 @@ const Notification = () => {
               </h1>
             </div>
             <div className="flex flex-col">
-              {/* {
-                data?.data?.attributes?.map((item,index)=>(
+              {
+                result?.map((item,index)=>(
                   <NotificationCart key={item?._id} item={item}/>
                 ))
-              } */}
+              }
+                {/* <NotificationCart />
                 <NotificationCart />
                 <NotificationCart />
                 <NotificationCart />
-                <NotificationCart />
-            
+             */}
             </div>
             <div className="flex justify-center my-10">
               <Pagination
                 onChange={onChange}
                 defaultCurrent={1}
-                // total={data?.pagination?.totalNotification}
-                total={20}
+                total={data?.pagination?.totalUsers}
+                pageSize={10}
+                // total={20}
               />
             </div>
           </div>

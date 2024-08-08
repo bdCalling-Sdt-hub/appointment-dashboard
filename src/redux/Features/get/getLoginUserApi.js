@@ -5,7 +5,7 @@ const getLoginUserApi = baseApi.injectEndpoints({
     endpoints:(builder)=>({
         getLoginUser:builder.query({
             query:()=>`/user/login-user`,
-            // providesTags:["category"],
+            providesTags:["user"],
         })
     })
 })

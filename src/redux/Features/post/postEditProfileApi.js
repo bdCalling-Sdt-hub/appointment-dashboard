@@ -12,7 +12,7 @@ const postEditProfileApi = baseApi.injectEndpoints({
               body: formData,
           } 
         },
-        invalidatesTags: ["category"],
+        invalidatesTags: ["user"],
       }),
     }),
    

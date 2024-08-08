@@ -18,10 +18,18 @@ import { HiOutlineMailOpen } from "react-icons/hi";
 import Swal from "sweetalert2";
 import { useGetPercentageQuery } from "../../../redux/Features/get/getPercentageApi";
 import { usePostCreatePercentageMutation } from "../../../redux/Features/post/postCrearePercentageApi";
+import { usePostChangePasswordMutation } from "../../../redux/Features/post/postChangePasswordApi";
+import { usePostForgetPasswordMutation } from "../../../redux/Features/post/postForgetPasswordApi";
+import { usePostOtpMutation } from "../../../redux/Features/post/postOtpApi";
+import { usePostSetPasswordMutation } from "../../../redux/Features/post/postSetPasswordApi";
 
 const Settings = () => {
   const navigate = useNavigate();
   const [setPercentage,res] = usePostCreatePercentageMutation();
+  const [setPassword,respon] = usePostChangePasswordMutation();
+  const [setEmailData] = usePostForgetPasswordMutation()
+  const [setOtpVerify] = usePostOtpMutation();
+  const [setPasswordData] = usePostSetPasswordMutation()
   const {data,isLoading} = useGetPercentageQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modelTitle, setModelTitle] = useState("");
@@ -84,18 +92,26 @@ console.log(data?.data?.attributes?.percentage);
 
   const handleChangePassword = async (values) => {
     const { newPassword, oldPassword } = values;
+    console.log(values);
+    
     try {
-      const response = await baseURL.post(
-        `/user/change-password`,
-        { oldPassword, newPassword },
+      const response = await setPassword(
         {
-          headers: {
-            "Content-Type": "application/json",
-            authentication: `Bearer ${localStorage.getItem("token")}`,
-          },
+          oldPassword: oldPassword,
+          newPassword: newPassword,
         }
-      );
+      )
       console.log(response);
+      if (response.data.statusCode == 200) {
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+      } );
+      setIsModalOpen(false);
+      }
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -109,45 +125,32 @@ console.log(data?.data?.attributes?.percentage);
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    //   try {
-    //     const response = await baseURL.post(`/user/verify-code`, {
-    //       email: email,
-    //       code: otp,
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         authentication: `Bearer ${localStorage.getItem("token")}`,
-    //       }
-    //     }
+    try {
+      const response = await setOtpVerify({ email: email, code: otp });
+      if (response.data.statusCode == 200) {
+        const token = response?.data?.data?.token;
+        localStorage.setItem("token", token);
+        // localStorage.setItem("user", response?.data?.data?.attributes?.user);
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        // navigate(`/set_new_password/${email}`);
+        setModelTitle("Reset Password");
+      }
+    } catch (error) {
+      console.log("Registration Fail", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error...",
+        text: error?.response?.data?.message,
+        footer: '<a href="#">Why do I have this issue?</a>',
+      });
+    }
 
-    //   );
-
-    //     console.log(response.data);
-    //     const token = response?.data?.data?.token;
-    //     console.log(token);
-    //     if (response.data.statusCode == 200) {
-    //       localStorage.setItem("token", token);
-    //       localStorage.setItem("user", response?.data?.data?.attributes?.user);
-    //       Swal.fire({
-    //         position: "top-center",
-    //         icon: "success",
-    //         title: response.data.message,
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //       });
-    //       // navigate(`/set_new_password/${email}`);
-    //       setModelTitle("Reset Password");
-    //     }
-    //   } catch (error) {
-    //     console.log("Registration Fail", error?.response?.data?.message);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Error...",
-    //       text: error?.response?.data?.message,
-    //       footer: '<a href="#">Why do I have this issue?</a>',
-    //     });
-    //   }
     setModelTitle("Reset Password");
   };
 
@@ -156,12 +159,7 @@ console.log(data?.data?.attributes?.percentage);
     const data = { email: email, password: values?.password };
     console.log(data);
     try {
-      const response = await baseURL.post(`/user/set-password`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          authentication: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await setPasswordData(data)
 
       console.log(response.data);
       if (response.data.statusCode == 200) {
@@ -188,13 +186,18 @@ console.log(data?.data?.attributes?.percentage);
   const handleForgetPassword = async (values) => {
     console.log(values);
     try {
-      const response = await baseURL.post(`/user/forgot-password`, values, {
-        headers: {
-          "Content-Type": "application/json",
-          authentication: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      console.log(response);
+      const response = await setEmailData(values.email);
+      console.log(response?.data?.statusCode);
+      if(response?.data?.statusCode == 200){
+        setModelTitle("Verify OTP");
+      }else{
+        Swal.fire({
+          icon: "error",
+          title: "Try Again...",
+          text: response?.data?.message,
+          footer: '<a href="#">Why do I have this issue?</a>',
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -203,7 +206,7 @@ console.log(data?.data?.attributes?.percentage);
         footer: '<a href="#">Why do I have this issue?</a>',
       });
     }
-    setModelTitle("Verify OTP");
+   
   };
 
   const handleSetPercentage = async (values) => {

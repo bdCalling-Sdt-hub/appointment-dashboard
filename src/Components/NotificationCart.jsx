@@ -25,6 +25,8 @@ function calculateTimeDifference(dateString) {
 }
 
 const NotificationCart = ({item}) => {
+  console.log(item);
+  
     const createdAt = "2022-01-01T00:00:00.000Z";
     const message = "You have received $500 from John Doe";
 //   const {message,createdAt} = item;
@@ -42,13 +44,13 @@ const NotificationCart = ({item}) => {
               
                 <h1 className="text-[16px]  font-normal">
                     
-                    {message}.
+                    {item?.message}.
                 </h1>
                 {/* <p className="text-[14px] text-[#979797]">{formatDate(createdAt)}</p> */}
             
             </div>
             <div>
-                <small className="">{calculateTimeDifference(createdAt)}</small>
+                <small className="">{calculateTimeDifference(item?.createdAt)}</small>
             </div>
         </div>
     );
