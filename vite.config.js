@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0', // This will make the server accessible externally
-    port: 8000, // Specify the port you want to use
+    port: 6000, // Specify the port you want to use
   },
 });
 
