@@ -12,7 +12,7 @@ const EarningStatus = () => {
                 {/* <LuBadgeDollarSign size={81} color="white" className="bg-[#FA1131] p-[10px] rounded-full"/> */}
                 <div className="">
                     <p className=" font-medium text-[20px] text-textColor">Total Admin Earnings</p>
-                    <h1 className="text-primary text-[44px] font-medium">$ {result?.totalAdminAmount}</h1>
+                    <h1 className="text-primary text-[44px] font-medium">$ {result?.totalAdminAmount.toFixed(2)}</h1>
                 </div>
             </div>
             <div className="bg-secondary px-[20px] py-[32px] flex justify-between items-center rounded-lg border-2 ">

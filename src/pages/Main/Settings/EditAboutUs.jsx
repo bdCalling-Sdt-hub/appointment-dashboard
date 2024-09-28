@@ -58,6 +58,7 @@ const EditAboutUs = () => {
       });
     }
   };
+  
     return (
         <div className="relative ml-[24px]">
         <div className=" mt-[44px] cursor-pointer flex items-center pb-3 gap-2">

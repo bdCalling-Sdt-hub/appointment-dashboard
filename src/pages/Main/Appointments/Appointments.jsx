@@ -329,7 +329,7 @@ const handleChangePage = (page) => {
               pageSize:10,
               total:data?.pagination?.totalUsers,
               showSizeChanger: false,
-                onChange: handleChangePage,
+              onChange: handleChangePage,
             }}
             // pagination={false}
             columns={columns}

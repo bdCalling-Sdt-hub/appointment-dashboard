@@ -16,10 +16,9 @@ const EditCategory = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [setData, { data: update, error }] = usePostUpdateCategoryMutation();
   const category = data?.data?.attributes;
-  if(isLoading){
-    return <Loading/>
+  if (isLoading) {
+    return <Loading />;
   }
-
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -31,9 +30,6 @@ const EditCategory = () => {
       name: values?.name,
       image: selectedFile,
     };
-
-   
-
 
     try {
       const formData = new FormData();
@@ -161,9 +157,9 @@ const EditCategory = () => {
             mt-[12px]
             items-center 
             gap-4 inline-flex"
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
               />
             </Form.Item>
           </div>

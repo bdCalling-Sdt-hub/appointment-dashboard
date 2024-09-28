@@ -183,31 +183,8 @@ console.log(data?.data?.attributes?.percentage);
     }
   };
 
-  const handleForgetPassword = async (values) => {
-    console.log(values);
-    try {
-      const response = await setEmailData(values.email);
-      console.log(response?.data?.statusCode);
-      if(response?.data?.statusCode == 200){
-        setModelTitle("Verify OTP");
-      }else{
-        Swal.fire({
-          icon: "error",
-          title: "Try Again...",
-          text: response?.data?.message,
-          footer: '<a href="#">Why do I have this issue?</a>',
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Try Again...",
-        text: error?.response?.data?.message,
-        footer: '<a href="#">Why do I have this issue?</a>',
-      });
-    }
-   
-  };
+
+  
 
   const handleSetPercentage = async (values) => {
     console.log(values);
@@ -221,6 +198,7 @@ console.log(data?.data?.attributes?.percentage);
         setIsModalOpen(false);
       }
     } catch (error) {
+      console.log("Registration Fail", error);
       Swal.fire({
         icon: "error",
         title: "Try Again...",
