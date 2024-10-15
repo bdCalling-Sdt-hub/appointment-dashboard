@@ -6,7 +6,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://167.71.191.220:3000/api/v1",
+    // baseUrl: "http://167.71.191.220:3000/api/v1",
+    baseUrl: "https://api.medroofurgentcare.com/api/v1",
     prepareHeaders: (headers, { getState }) => {
       const token = localStorage.getItem("token");
       console.log("token----=-=-=-==-=-=",token);
